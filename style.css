@@ -631,10 +631,10 @@ button { font-family: inherit; cursor: pointer; }
 
 /* ── DASHBOARD — STAT CARDS ─────────────────────────────────── */
 .stats-grid-4 {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 20px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; margin-bottom: 20px;
 }
 .stats-grid-3 {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 20px;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; margin-bottom: 20px;
 }
 .stat-card { padding: 22px; transition: border-color 0.4s, box-shadow 0.4s; }
 .stat-top  { display: flex; align-items: center; gap: 11px; margin-bottom: 18px; }
@@ -921,7 +921,7 @@ td { padding: 13px 16px; font-size: 0.855rem; }
 }
 
 /* ── 3-COLUMN ANALYTICS GRID ────────────────────────────────── */
-.analytics-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.analytics-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
 
 /* ── NO-IP NOTICE ───────────────────────────────────────────── */
 .no-ip-notice {

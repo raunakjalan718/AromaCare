@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Nose Pro | Modular Electronic Nose System</title>
+    <title>AromaCare | Modular Electronic Nose System</title>
     <meta name="description" content="Real-time IoT hygiene monitoring — ESP32 + MQ135, MQ136, MQ137 gas sensor array with live web dashboard.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,7 +28,7 @@
         <div class="navbar-inner">
             <button class="nav-logo" onclick="showPage('landing')" aria-label="Go to Home">
                 <div class="logo-icon"><i data-lucide="wind"></i></div>
-                <span class="logo-text">E-Nose<em>Pro</em></span>
+                <span class="logo-text">Aroma<em>Care</em></span>
             </button>
 
             <div class="nav-center" id="nav-landing-links">
@@ -338,7 +338,7 @@
                 <div class="footer-brand">
                     <button class="nav-logo" onclick="showPage('landing')">
                         <div class="logo-icon small"><i data-lucide="wind"></i></div>
-                        <span class="logo-text small">E-Nose<em>Pro</em></span>
+                        <span class="logo-text small">Aroma<em>Care</em></span>
                     </button>
                     <p>Modular Electronic Nose — ESP32 + MQ135 / MQ136 / MQ137</p>
                     <div class="footer-tags">
@@ -364,7 +364,7 @@
                 </div>
             </div>
             <div class="footer-bar">
-                <span>© 2026 E-Nose Pro · SEPM Project</span>
+                <span>© 2026 AromaCare · SEPM Project</span>
                 <span>Built for clinical and personal care environments.</span>
             </div>
         </footer>
@@ -380,7 +380,7 @@
                 <div class="auth-brand">
                     <div class="logo-icon large"><i data-lucide="wind"></i></div>
                     <div>
-                        <h2>E-Nose<em>Pro</em></h2>
+                        <h2>Aroma<em>Care</em></h2>
                         <span>Secure Clinical Portal</span>
                     </div>
                 </div>
@@ -782,11 +782,10 @@
                 </div>
 
                 <div class="ip-instructions glass-card" style="margin-top:10px;border-color:rgba(239,68,68,0.25);background:rgba(239,68,68,0.04)">
-                    <h5 style="color:var(--amber)"><i data-lucide="alert-triangle"></i> If Connect still fails (CORS / PNA error)</h5>
+                    <h5 style="color:var(--amber)"><i data-lucide="alert-triangle"></i> If Connect fails (Vercel / CORS Error)</h5>
                     <ol>
-                        <li>Open a <strong>new Chrome tab</strong> and go to: <code id="esp32-direct-link">http://10.117.169.31/status</code></li>
-                        <li>You should see raw JSON — if yes, <strong>leave that tab open</strong>, then come back here and click Connect.</li>
-                        <li>Still failing? You need to update the ESP32 firmware — see <strong>Fix B</strong> below. ↓</li>
+                        <li><strong>For Vercel (HTTPS):</strong> If you are on an HTTPS site, Chrome blocks local HTTP IPs (Mixed Content). To fix: click the <strong>Lock Icon 🔒</strong> in your browser's URL bar → <strong>Site Settings</strong> → find <strong>Insecure content</strong> and set it to <strong>Allow</strong>. Then reload the page.</li>
+                        <li><strong>For CORS:</strong> Open a <strong>new Chrome tab</strong> and go to: <code id="esp32-direct-link">http://10.x.x.x/status</code>. If you see JSON, leave it open and click Connect again.</li>
                     </ol>
                 </div>
 

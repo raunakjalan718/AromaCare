@@ -68,7 +68,7 @@ void setup() {
   Serial.println("\nWiFi connected!");
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
-  Serial.println("Enter this IP in the E-Nose Pro web portal Settings page.");
+  Serial.println("Enter this IP in the AromaCare web portal Settings page.");
 
   // ── Routes ────────────────────────────────────────────────
   // GET  /status  — returns JSON sensor data

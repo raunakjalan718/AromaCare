@@ -1,5 +1,5 @@
 /**
- * app.js — E-Nose Pro | Real ESP32 Integration Controller
+ * app.js — AromaCare | Real ESP32 Integration Controller
  * Polls /status from the ESP32 WiFi web server every 2 seconds.
  * Stores readings in the LocalStorage JSON database.
  * SEPM Project 2026
@@ -813,11 +813,18 @@ async function connectESP32() {
         setConnState('error');
         console.error('[ESP32 Connect]', err);
 
-        // Detect likely CORS / Private Network Access block
+        // Detect likely CORS / Private Network Access or Mixed Content block
         const isCors = err.name === 'TypeError';
-        const msg = isCors
-            ? `Blocked by browser CORS/PNA — see the fix instructions below.`
-            : `Cannot reach ${ip} — check IP & WiFi. (${err.message})`;
+        const isHttps = window.location.protocol === 'https:';
+        let msg = `Cannot reach ${ip} — check IP & WiFi. (${err.message})`;
+        
+        if (isCors) {
+            if (isHttps) {
+                msg = `Vercel (HTTPS) blocks local IPs. Click 🔒 in URL bar -> Site Settings -> Allow Insecure Content.`;
+            } else {
+                msg = `Blocked by browser CORS/PNA — see the fix instructions below.`;
+            }
+        }
         showToast(msg, true);
     }
 

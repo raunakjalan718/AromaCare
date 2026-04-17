@@ -1,5 +1,5 @@
 /**
- * db.js — E-Nose Pro JSON LocalStorage Database Layer
+ * db.js — AromaCare JSON LocalStorage Database Layer
  * Schema v3 — Real ESP32 MQ135/MQ136/MQ137 Data
  * SEPM Project 2026
  */
