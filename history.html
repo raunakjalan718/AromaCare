@@ -1,0 +1,18 @@
+function loadHistory() {
+    const logs = getLogs();
+    const tableBody = document.getElementById('table-body');
+    tableBody.innerHTML = ''; // Clear old rows
+
+    // Show most recent data first
+    logs.reverse().forEach(entry => {
+        const row = `
+            <tr>
+                <td class="time-cell">${entry.timestamp}</td>
+                <td><span class="badge gas">${entry.gas} ppm</span></td>
+                <td>${entry.temp} °C</td>
+                <td>${entry.hum} %</td>
+            </tr>
+        `;
+        tableBody.innerHTML += row;
+    });
+}

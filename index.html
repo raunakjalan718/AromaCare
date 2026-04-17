@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Nose Pro | Modular Electronic Nose System</title>
+    <meta name="description" content="Real-time IoT hygiene monitoring — ESP32 + MQ135, MQ136, MQ137 gas sensor array with live web dashboard.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+
+    <!-- Background -->
+    <div class="bg-orbs" aria-hidden="true">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+    </div>
+    <div class="grid-overlay" aria-hidden="true"></div>
+
+    <!-- ═══════════════════════════ NAVBAR ═══════════════════════════ -->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-inner">
+            <button class="nav-logo" onclick="showPage('landing')" aria-label="Go to Home">
+                <div class="logo-icon"><i data-lucide="wind"></i></div>
+                <span class="logo-text">E-Nose<em>Pro</em></span>
+            </button>
+
+            <div class="nav-center" id="nav-landing-links">
+                <button class="nav-link" onclick="showPage('landing')">Home</button>
+                <button class="nav-link" onclick="scrollToSection('how-it-works')">How It Works</button>
+                <button class="nav-link" onclick="scrollToSection('sensors')">Sensors</button>
+                <button class="nav-link" onclick="scrollToSection('features')">Features</button>
+            </div>
+
+            <div class="nav-center" id="nav-app-links" style="display:none">
+                <button class="nav-link" id="nl-dash"      onclick="showPage('dashboard')"><i data-lucide="activity"></i> Dashboard</button>
+                <button class="nav-link" id="nl-analytics" onclick="showPage('analytics')"><i data-lucide="bar-chart-3"></i> Analytics</button>
+                <button class="nav-link" id="nl-history"   onclick="showPage('history')"><i data-lucide="clock"></i> History</button>
+                <button class="nav-link" id="nl-settings"  onclick="showPage('settings')"><i data-lucide="settings"></i> Settings</button>
+            </div>
+
+            <div class="nav-right">
+                <div id="nav-auth-area">
+                    <button class="btn-nav-login" onclick="showPage('login')">
+                        <i data-lucide="log-in"></i> Client Login
+                    </button>
+                </div>
+                <div id="nav-user-area" style="display:none">
+                    <div class="nav-user-info">
+                        <div class="nav-avatar">A</div>
+                        <span>Admin</span>
+                    </div>
+                    <button class="btn-logout" onclick="logout()" title="Logout">
+                        <i data-lucide="log-out"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ═══════════════════════════ LANDING ═══════════════════════════ -->
+    <main id="page-landing" class="page active">
+
+        <!-- HERO -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <div class="hero-badge" style="animation-delay:0s">
+                    <span class="pulse-dot"></span>
+                    ESP32-Powered · MQ135 · MQ136 · MQ137
+                </div>
+                <h1 class="hero-title" style="animation-delay:0.08s">
+                    Electronic Nose<br>
+                    <span class="gradient-text">Hygiene Intelligence</span>
+                </h1>
+                <p class="hero-subtitle" style="animation-delay:0.16s">
+                    A modular IoT hygiene monitoring system built on the ESP32 microcontroller with a live array of MQ-series gas sensors. Real sensor data streams directly from hardware to this web dashboard — no simulation, no guesswork.
+                </p>
+                <div class="hero-btns" style="animation-delay:0.24s">
+                    <button class="btn-primary large" onclick="showPage('login')">
+                        <i data-lucide="shield"></i> Launch Portal
+                    </button>
+                    <button class="btn-outline large" onclick="scrollToSection('how-it-works')">
+                        <i data-lucide="play-circle"></i> Learn More
+                    </button>
+                </div>
+                <div class="hero-stats" style="animation-delay:0.32s">
+                    <div class="hero-stat">
+                        <span class="hs-val cyan">3</span>
+                        <span class="hs-lbl">MQ Sensors</span>
+                    </div>
+                    <div class="hs-divider"></div>
+                    <div class="hero-stat">
+                        <span class="hs-val purple">2s</span>
+                        <span class="hs-lbl">Poll Rate</span>
+                    </div>
+                    <div class="hs-divider"></div>
+                    <div class="hero-stat">
+                        <span class="hs-val green">Real</span>
+                        <span class="hs-lbl">Data Source</span>
+                    </div>
+                    <div class="hs-divider"></div>
+                    <div class="hero-stat">
+                        <span class="hs-val amber">Auto</span>
+                        <span class="hs-lbl">Fan Control</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Animated device mockup -->
+            <div class="hero-device-wrap" style="animation-delay:0.4s">
+                <div class="device-card glass-dark">
+                    <div class="device-header">
+                        <span class="device-title">LIVE SENSOR READINGS</span>
+                        <span class="device-live"><span class="pulse-dot-sm"></span> ESP32 Live</span>
+                    </div>
+                    <div class="device-sensors">
+                        <div class="device-sensor-row">
+                            <span class="ds-name">MQ-135</span>
+                            <div class="ds-track"><div class="ds-fill cyan" style="width:55%"></div></div>
+                            <span class="ds-reading cyan">221 ADC</span>
+                        </div>
+                        <div class="device-sensor-row">
+                            <span class="ds-name">MQ-136</span>
+                            <div class="ds-track"><div class="ds-fill purple" style="width:38%"></div></div>
+                            <span class="ds-reading purple">152 ADC</span>
+                        </div>
+                        <div class="device-sensor-row">
+                            <span class="ds-name">MQ-137</span>
+                            <div class="ds-track"><div class="ds-fill green" style="width:28%"></div></div>
+                            <span class="ds-reading green">114 ADC</span>
+                        </div>
+                        <div class="device-sensor-row">
+                            <span class="ds-name">Fan</span>
+                            <div class="ds-track"><div class="ds-fill amber" style="width:0%"></div></div>
+                            <span class="ds-reading amber">OFF</span>
+                        </div>
+                    </div>
+                    <div class="device-footer">
+                        <i data-lucide="check-circle"></i>
+                        <span>All Clear — Fan Idle</span>
+                    </div>
+                </div>
+                <div class="float-badge float-badge-tl">
+                    <i data-lucide="cpu"></i>
+                    <div><strong>ESP32</strong><span>WiFi Connected</span></div>
+                </div>
+                <div class="float-badge float-badge-br">
+                    <i data-lucide="fan"></i>
+                    <div><strong>Servo Fan</strong><span>Auto-triggered</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- HOW IT WORKS -->
+        <section class="section" id="how-it-works">
+            <div class="section-eyebrow">Event-Driven Architecture</div>
+            <h2 class="section-title">How It Works</h2>
+            <p class="section-desc">Real sensor readings from the ESP32 flow through a four-stage pipeline from hardware capture to instant Web Dashboard alerts.</p>
+
+            <div class="process-grid">
+                <div class="process-card glass-card anim-el">
+                    <div class="process-num cyan">01</div>
+                    <div class="process-icon-wrap cyan-bg"><i data-lucide="wind"></i></div>
+                    <h3>Air Sample Capture</h3>
+                    <p>The ESP32 reads three MQ-series gas sensors through its 12-bit ADC pins every 100 ms. Raw values (0–4095) represent ambient gas concentrations in real time.</p>
+                </div>
+                <div class="process-card glass-card anim-el" style="transition-delay:0.08s">
+                    <div class="process-num purple">02</div>
+                    <div class="process-icon-wrap purple-bg"><i data-lucide="scan-search"></i></div>
+                    <h3>Threshold Detection</h3>
+                    <p>Inside the ESP32 firmware, each ADC reading is compared against a threshold of 400. Readings above this limit are immediately flagged as BAD and trigger the alert pipeline.</p>
+                </div>
+                <div class="process-card glass-card anim-el" style="transition-delay:0.16s">
+                    <div class="process-num green">03</div>
+                    <div class="process-icon-wrap green-bg"><i data-lucide="wifi"></i></div>
+                    <h3>WiFi HTTP API</h3>
+                    <p>The ESP32 hosts a lightweight HTTP server on port 80. This dashboard polls the <code>/status</code> endpoint every 2 seconds to retrieve JSON sensor data, statuses, and fan state.</p>
+                </div>
+                <div class="process-card glass-card anim-el" style="transition-delay:0.24s">
+                    <div class="process-num amber">04</div>
+                    <div class="process-icon-wrap amber-bg"><i data-lucide="bell-ring"></i></div>
+                    <h3>Dual-Channel Alerts</h3>
+                    <p>Poor air quality triggers the servo-controlled fan automatically on the ESP32. Simultaneously, this dashboard fires a visual alert banner and logs the event with a full timestamp.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SENSOR ARRAY -->
+        <section class="section" id="sensors">
+            <div class="section-eyebrow">Hardware Configuration</div>
+            <h2 class="section-title">Sensor Array</h2>
+            <p class="section-desc">Three MQ-series gas sensors connected to the ESP32-WROOM-32's 12-bit ADC pins provide a comprehensive picture of ambient air quality.</p>
+
+            <div class="sensors-grid">
+                <div class="sensor-card glass-card anim-el">
+                    <div class="sensor-card-top">
+                        <div class="sensor-badge cyan-bg"><i data-lucide="leaf"></i></div>
+                        <div class="sensor-model-info">
+                            <span class="sensor-model">MQ-135</span>
+                            <span class="sensor-type">Air Quality Sensor · GPIO 34</span>
+                        </div>
+                        <span class="sensor-tag-label cyan-bg">ADC1_CH6</span>
+                    </div>
+                    <p>Broad-spectrum air quality sensor sensitive to ammonia (NH₃), benzene, sulfide, CO₂ and smoke. The primary sanitation and cleanliness indicator for the monitoring array.</p>
+                    <div class="sensor-specs">
+                        <div class="spec-row"><span>ADC Pin</span><strong class="cyan">GPIO 34 (ADC1_CH6)</strong></div>
+                        <div class="spec-row"><span>ADC Range</span><strong>0 – 4095 (12-bit)</strong></div>
+                        <div class="spec-row"><span>Alert Threshold</span><strong>400 ADC units</strong></div>
+                    </div>
+                </div>
+
+                <div class="sensor-card glass-card anim-el" style="transition-delay:0.08s">
+                    <div class="sensor-card-top">
+                        <div class="sensor-badge purple-bg"><i data-lucide="flame"></i></div>
+                        <div class="sensor-model-info">
+                            <span class="sensor-model">MQ-136</span>
+                            <span class="sensor-type">Hydrogen Sulfide Sensor · GPIO 35</span>
+                        </div>
+                        <span class="sensor-tag-label purple-bg">ADC1_CH7</span>
+                    </div>
+                    <p>Sensitive to hydrogen sulfide (H₂S) gas and other sulfur-bearing compounds. Key indicator for detecting spoilage, sanitation deficiencies and hazardous gas events.</p>
+                    <div class="sensor-specs">
+                        <div class="spec-row"><span>ADC Pin</span><strong class="purple">GPIO 35 (ADC1_CH7)</strong></div>
+                        <div class="spec-row"><span>ADC Range</span><strong>0 – 4095 (12-bit)</strong></div>
+                        <div class="spec-row"><span>Alert Threshold</span><strong>400 ADC units</strong></div>
+                    </div>
+                </div>
+
+                <div class="sensor-card glass-card anim-el" style="transition-delay:0.16s">
+                    <div class="sensor-card-top">
+                        <div class="sensor-badge green-bg"><i data-lucide="droplets"></i></div>
+                        <div class="sensor-model-info">
+                            <span class="sensor-model">MQ-137</span>
+                            <span class="sensor-type">Ammonia Sensor · GPIO 32</span>
+                        </div>
+                        <span class="sensor-tag-label green-bg">ADC1_CH4</span>
+                    </div>
+                    <p>Dedicated ammonia (NH₃) detection sensor. Critical for hygiene monitoring in clinical and personal care settings where ammonia is a primary biomarker of unsanitary conditions.</p>
+                    <div class="sensor-specs">
+                        <div class="spec-row"><span>ADC Pin</span><strong class="green">GPIO 32 (ADC1_CH4)</strong></div>
+                        <div class="spec-row"><span>ADC Range</span><strong>0 – 4095 (12-bit)</strong></div>
+                        <div class="spec-row"><span>Alert Threshold</span><strong>400 ADC units</strong></div>
+                    </div>
+                </div>
+
+                <div class="sensor-card glass-card anim-el" style="transition-delay:0.24s">
+                    <div class="sensor-card-top">
+                        <div class="sensor-badge amber-bg"><i data-lucide="fan"></i></div>
+                        <div class="sensor-model-info">
+                            <span class="sensor-model">Servo Fan</span>
+                            <span class="sensor-type">Auto-Response Actuator · GPIO 25</span>
+                        </div>
+                        <span class="sensor-tag-label amber-bg">PWM</span>
+                    </div>
+                    <p>A servo-controlled fan actuator that activates automatically whenever any sensor reading exceeds the alert threshold. Cycles every 10 seconds to purge contaminated air from the monitored space.</p>
+                    <div class="sensor-specs">
+                        <div class="spec-row"><span>Control Pin</span><strong class="amber">GPIO 25 (PWM)</strong></div>
+                        <div class="spec-row"><span>OFF Position</span><strong>0° (servo angle)</strong></div>
+                        <div class="spec-row"><span>ON Position</span><strong>90° (servo angle)</strong></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FEATURES -->
+        <section class="section" id="features">
+            <div class="section-eyebrow">Platform Capabilities</div>
+            <h2 class="section-title">Key Features</h2>
+            <p class="section-desc">A complete end-to-end platform connecting real ESP32 hardware to a premium web dashboard with persistent storage and analytics.</p>
+
+            <div class="features-grid">
+                <div class="feature-card glass-card anim-el">
+                    <div class="feature-icon-wrap cyan-bg"><i data-lucide="wifi"></i></div>
+                    <h4>Live ESP32 HTTP Polling</h4>
+                    <p>Fetches the JSON sensor payload from the ESP32's built-in HTTP server every 2 seconds. Enter the ESP32's WiFi IP address in Settings to connect instantly.</p>
+                </div>
+                <div class="feature-card glass-card anim-el" style="transition-delay:0.06s">
+                    <div class="feature-icon-wrap purple-bg"><i data-lucide="database"></i></div>
+                    <h4>Persistent JSON Database</h4>
+                    <p>Every reading is stored with a precise ISO timestamp in a LocalStorage JSON database, maintaining up to 500 historical entries that survive browser restarts.</p>
+                </div>
+                <div class="feature-card glass-card anim-el" style="transition-delay:0.12s">
+                    <div class="feature-icon-wrap green-bg"><i data-lucide="bar-chart-3"></i></div>
+                    <h4>Per-Sensor Analytics</h4>
+                    <p>Three dedicated Chart.js graphs — one for each MQ sensor — display raw ADC values over time with a red dashed alert threshold line and min/max/avg statistics.</p>
+                </div>
+                <div class="feature-card glass-card anim-el" style="transition-delay:0.18s">
+                    <div class="feature-icon-wrap amber-bg"><i data-lucide="fan"></i></div>
+                    <h4>Fan Status Monitoring</h4>
+                    <p>The dashboard mirrors the ESP32's servo fan state in real time. Alerts fire both inside the hardware (servo moves to 90°) and on-screen simultaneously.</p>
+                </div>
+                <div class="feature-card glass-card anim-el" style="transition-delay:0.24s">
+                    <div class="feature-icon-wrap cyan-bg"><i data-lucide="download"></i></div>
+                    <h4>CSV Data Export</h4>
+                    <p>One-click export produces a fully formatted CSV with timestamps, ADC values, GOOD/BAD statuses, and fan state for all stored records.</p>
+                </div>
+                <div class="feature-card glass-card anim-el" style="transition-delay:0.30s">
+                    <div class="feature-icon-wrap purple-bg"><i data-lucide="shield-check"></i></div>
+                    <h4>Secure Login Portal</h4>
+                    <p>Authenticated access ensures only authorised personnel can view live sensor data, configure the ESP32 connection, and manage alert thresholds.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SPECS STRIP -->
+        <section class="specs-strip">
+            <div class="specs-strip-inner">
+                <div class="spec-item"><i data-lucide="cpu" class="cyan"></i><div><strong>ESP32-WROOM-32</strong><span>Microcontroller</span></div></div>
+                <div class="spec-item"><i data-lucide="wifi" class="purple"></i><div><strong>Wi-Fi 802.11 b/g/n</strong><span>Connectivity</span></div></div>
+                <div class="spec-item"><i data-lucide="timer" class="green"></i><div><strong>2-Second Poll Rate</strong><span>From Dashboard</span></div></div>
+                <div class="spec-item"><i data-lucide="thermometer" class="amber"></i><div><strong>12-bit ADC (0–4095)</strong><span>Signal Range</span></div></div>
+                <div class="spec-item"><i data-lucide="hard-drive" class="cyan"></i><div><strong>500 Records Max</strong><span>LocalStorage DB</span></div></div>
+                <div class="spec-item"><i data-lucide="code-2" class="purple"></i><div><strong>Firmware v2.1.0</strong><span>April 2026</span></div></div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="cta-section">
+            <div class="cta-glow"></div>
+            <div class="cta-inner">
+                <h2>Ready to Monitor?</h2>
+                <p>Enter your ESP32's IP address in Settings after logging in — then watch real sensor data populate the dashboard live.</p>
+                <button class="btn-primary large" onclick="showPage('login')">
+                    <i data-lucide="arrow-right-circle"></i> Access Web Portal
+                </button>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <div class="footer-inner">
+                <div class="footer-brand">
+                    <button class="nav-logo" onclick="showPage('landing')">
+                        <div class="logo-icon small"><i data-lucide="wind"></i></div>
+                        <span class="logo-text small">E-Nose<em>Pro</em></span>
+                    </button>
+                    <p>Modular Electronic Nose — ESP32 + MQ135 / MQ136 / MQ137</p>
+                    <div class="footer-tags">
+                        <span>IoT</span><span>ESP32</span><span>Air Quality</span>
+                        <span>MQ Sensors</span><span>Hygiene Monitoring</span><span>SEPM</span>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-col">
+                        <h5>Portal</h5>
+                        <button onclick="showPage('login')">Client Login</button>
+                        <button onclick="showPage('dashboard')">Live Dashboard</button>
+                        <button onclick="showPage('analytics')">Analytics</button>
+                        <button onclick="showPage('history')">History</button>
+                    </div>
+                    <div class="footer-col">
+                        <h5>System</h5>
+                        <button onclick="scrollToSection('how-it-works')">How It Works</button>
+                        <button onclick="scrollToSection('sensors')">Sensor Array</button>
+                        <button onclick="scrollToSection('features')">Features</button>
+                        <button onclick="showPage('settings')">Settings</button>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bar">
+                <span>© 2026 E-Nose Pro · SEPM Project</span>
+                <span>Built for clinical and personal care environments.</span>
+            </div>
+        </footer>
+    </main>
+
+    <!-- ═══════════════════════════ LOGIN ═══════════════════════════ -->
+    <main id="page-login" class="page">
+        <div class="auth-layout">
+            <div class="auth-left">
+                <button class="btn-back" onclick="showPage('landing')">
+                    <i data-lucide="arrow-left"></i> Back to Home
+                </button>
+                <div class="auth-brand">
+                    <div class="logo-icon large"><i data-lucide="wind"></i></div>
+                    <div>
+                        <h2>E-Nose<em>Pro</em></h2>
+                        <span>Secure Clinical Portal</span>
+                    </div>
+                </div>
+                <p class="auth-tagline">Sign in to access live ESP32 sensor data, historical analytics, and system configuration.</p>
+                <div class="auth-points">
+                    <div class="auth-point"><i data-lucide="check-circle"></i><span>Live MQ135 / MQ136 / MQ137 data</span></div>
+                    <div class="auth-point"><i data-lucide="check-circle"></i><span>Real-time fan status tracking</span></div>
+                    <div class="auth-point"><i data-lucide="check-circle"></i><span>Persistent JSON sensor database</span></div>
+                    <div class="auth-point"><i data-lucide="check-circle"></i><span>Per-sensor analytics charts</span></div>
+                    <div class="auth-point"><i data-lucide="check-circle"></i><span>CSV export for clinical records</span></div>
+                </div>
+            </div>
+            <div class="auth-right">
+                <div class="login-card glass-dark">
+                    <div class="login-header">
+                        <div class="login-icon-wrap"><i data-lucide="shield-check"></i></div>
+                        <h3>Portal Access</h3>
+                        <p>Enter your credentials to continue</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <div class="input-wrap">
+                            <i data-lucide="user" class="input-icon"></i>
+                            <input type="text" id="username" placeholder="Enter username" autocomplete="username">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="input-wrap">
+                            <i data-lucide="lock" class="input-icon"></i>
+                            <input type="password" id="password" placeholder="Enter password" onkeypress="if(event.key==='Enter') handleLogin()">
+                        </div>
+                    </div>
+                    <div class="login-hint">
+                        <i data-lucide="info"></i>
+                        Default credentials: <strong>admin</strong> / <strong>password123</strong>
+                    </div>
+                    <button class="btn-primary full-width" id="login-btn" onclick="handleLogin()">
+                        <span id="login-btn-text">Login to Portal</span>
+                        <i data-lucide="arrow-right"></i>
+                    </button>
+                    <div id="login-error" class="login-error" style="display:none">
+                        <i data-lucide="alert-circle"></i>
+                        <span>Invalid credentials. Please try again.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ═══════════════════════════ DASHBOARD ═══════════════════════════ -->
+    <main id="page-dashboard" class="page app-page">
+        <div class="app-header">
+            <div class="breadcrumb">
+                <button class="btn-icon" onclick="showPage('landing')"><i data-lucide="home"></i></button>
+                <i data-lucide="chevron-right" class="bc-sep"></i>
+                <span>Live Dashboard</span>
+            </div>
+            <div class="app-header-right">
+                <!-- ESP32 connection badge -->
+                <div id="conn-badge" class="status-pill warning">
+                    <span class="pulse-dot-sm" style="background:var(--amber)"></span>
+                    <span id="conn-badge-text">ESP32 Not Configured</span>
+                </div>
+                <!-- System status (shown after connection) -->
+                <div id="sys-badge" class="status-pill ok" style="display:none">
+                    <span class="pulse-dot-sm"></span>
+                    <span id="sys-badge-text">Air Quality Normal</span>
+                </div>
+                <span class="last-upd" id="last-upd">--</span>
+            </div>
+        </div>
+
+        <!-- Alert Banner -->
+        <div id="alert-banner" class="alert-banner" role="alert" style="display:none">
+            <div class="alert-banner-content">
+                <i data-lucide="alert-triangle"></i>
+                <strong>ANOMALY DETECTED:</strong>
+                <span id="alert-msg-text">Threshold exceeded.</span>
+            </div>
+            <button class="alert-dismiss" onclick="dismissAlert()"><i data-lucide="x"></i></button>
+        </div>
+
+        <!-- No-IP notice -->
+        <div id="no-ip-notice" class="no-ip-notice glass-card">
+            <i data-lucide="wifi-off"></i>
+            <div>
+                <h4>ESP32 Not Configured</h4>
+                <p>Go to <strong>Settings</strong> and enter your ESP32's WiFi IP address to start receiving live sensor data. The IP is printed in the Arduino Serial Monitor on startup.</p>
+            </div>
+            <button class="btn-primary" onclick="showPage('settings')">
+                <i data-lucide="settings"></i> Open Settings
+            </button>
+        </div>
+
+        <!-- 3 Stat Cards: MQ-135, MQ-136, MQ-137 -->
+        <div class="stats-grid-3">
+            <!-- MQ-135 -->
+            <div class="stat-card glass-card" id="card-mq135">
+                <div class="stat-top">
+                    <div class="stat-icon-wrap cyan-bg"><i data-lucide="leaf"></i></div>
+                    <div class="stat-meta">
+                        <span class="stat-name">MQ-135</span>
+                        <span class="stat-type">Air Quality</span>
+                    </div>
+                    <span class="stat-pill normal" id="pill-mq135">Good</span>
+                </div>
+                <div class="stat-val-row">
+                    <span class="stat-big" id="val-mq135">--</span>
+                    <span class="stat-unit">ADC</span>
+                </div>
+                <div class="stat-baseline">Alert at: <span>2300 ADC</span></div>
+                <div class="stat-track"><div class="stat-bar cyan" id="bar-mq135" style="width:0%"></div></div>
+            </div>
+
+            <!-- MQ-136 -->
+            <div class="stat-card glass-card" id="card-mq136">
+                <div class="stat-top">
+                    <div class="stat-icon-wrap purple-bg"><i data-lucide="flame"></i></div>
+                    <div class="stat-meta">
+                        <span class="stat-name">MQ-136</span>
+                        <span class="stat-type">Gas Detection</span>
+                    </div>
+                    <span class="stat-pill normal" id="pill-mq136">Good</span>
+                </div>
+                <div class="stat-val-row">
+                    <span class="stat-big" id="val-mq136">--</span>
+                    <span class="stat-unit">ADC</span>
+                </div>
+                <div class="stat-baseline">Alert at: <span>1750 ADC</span></div>
+                <div class="stat-track"><div class="stat-bar purple" id="bar-mq136" style="width:0%"></div></div>
+            </div>
+
+            <!-- MQ-137 -->
+            <div class="stat-card glass-card" id="card-mq137">
+                <div class="stat-top">
+                    <div class="stat-icon-wrap green-bg"><i data-lucide="droplets"></i></div>
+                    <div class="stat-meta">
+                        <span class="stat-name">MQ-137</span>
+                        <span class="stat-type">Ammonia (NH₃)</span>
+                    </div>
+                    <span class="stat-pill normal" id="pill-mq137">Good</span>
+                </div>
+                <div class="stat-val-row">
+                    <span class="stat-big" id="val-mq137">--</span>
+                    <span class="stat-unit">ADC</span>
+                </div>
+                <div class="stat-baseline">Alert at: <span>1750 ADC</span></div>
+
+                <div class="stat-track"><div class="stat-bar green" id="bar-mq137" style="width:0%"></div></div>
+            </div>
+
+        </div>
+
+        <!-- Chart + Alert Log -->
+        <div class="dash-bottom-grid">
+            <div class="glass-card chart-panel">
+                <div class="card-header">
+                    <h3><i data-lucide="activity"></i> Real-Time Sensor Readings (ADC)</h3>
+                    <div class="legend-row">
+                        <span class="legend-dot cyan">MQ-135</span>
+                        <span class="legend-dot purple">MQ-136</span>
+                        <span class="legend-dot green">MQ-137</span>
+                    </div>
+                </div>
+                <div class="chart-wrap" style="height:310px">
+                    <canvas id="liveChart"></canvas>
+                </div>
+                <div class="chart-note">Raw ADC values (0–4095). Threshold lines: MQ-135=2300 · MQ-136=1750 · MQ-137=1750</div>
+            </div>
+
+            <div class="glass-card alert-log-panel">
+                <div class="card-header">
+                    <h3><i data-lucide="bell"></i> Alert Log</h3>
+                    <span class="count-pill" id="alert-count-pill">0 alerts</span>
+                </div>
+                <div class="alert-log-scroll" id="alert-log-body">
+                    <div class="empty-msg">
+                        <i data-lucide="check-circle" style="color:var(--green)"></i>
+                        <strong>No alerts</strong>
+                        <span>All sensors within normal range</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ═══════════════════════════ ANALYTICS ═══════════════════════════ -->
+    <main id="page-analytics" class="page app-page">
+        <div class="app-header">
+            <div class="breadcrumb">
+                <button class="btn-icon" onclick="showPage('landing')"><i data-lucide="home"></i></button>
+                <i data-lucide="chevron-right" class="bc-sep"></i>
+                <button class="bc-link" onclick="showPage('dashboard')">Dashboard</button>
+                <i data-lucide="chevron-right" class="bc-sep"></i>
+                <span>Analytics</span>
+            </div>
+            <div class="app-header-right">
+                <div class="range-tabs" id="range-tabs">
+                    <button class="range-tab active" onclick="setRange(30, this)">Last 30</button>
+                    <button class="range-tab" onclick="setRange(50, this)">Last 50</button>
+                    <button class="range-tab" onclick="setRange(0, this)">All Data</button>
+                </div>
+                <button class="btn-secondary" onclick="downloadCSV()">
+                    <i data-lucide="download"></i> Export CSV
+                </button>
+            </div>
+        </div>
+
+        <!-- 3 per-sensor charts (one per MQ sensor) -->
+        <div class="analytics-grid-3">
+
+            <!-- MQ-135 -->
+            <div class="glass-card analytics-card">
+                <div class="analytics-header">
+                    <div class="analytics-sensor">
+                        <div class="stat-icon-wrap small cyan-bg"><i data-lucide="leaf"></i></div>
+                        <div>
+                            <h4>MQ-135 — Air Quality</h4>
+                            <span class="unit-note">GPIO 34 · ADC1_CH6 · Alert at 400 ADC</span>
+                        </div>
+                    </div>
+                    <div class="analytics-stats">
+                        <div class="astat"><span>Min</span><strong class="cyan"  id="min-mq135">--</strong></div>
+                        <div class="astat"><span>Avg</span><strong               id="avg-mq135">--</strong></div>
+                        <div class="astat"><span>Max</span><strong               id="max-mq135">--</strong></div>
+                    </div>
+                </div>
+                <div class="chart-wrap" style="height:240px"><canvas id="chartMQ135"></canvas></div>
+            </div>
+
+            <!-- MQ-136 -->
+            <div class="glass-card analytics-card">
+                <div class="analytics-header">
+                    <div class="analytics-sensor">
+                        <div class="stat-icon-wrap small purple-bg"><i data-lucide="flame"></i></div>
+                        <div>
+                            <h4>MQ-136 — Gas Detection</h4>
+                            <span class="unit-note">GPIO 35 · ADC1_CH7 · Alert at 400 ADC</span>
+                        </div>
+                    </div>
+                    <div class="analytics-stats">
+                        <div class="astat"><span>Min</span><strong class="purple" id="min-mq136">--</strong></div>
+                        <div class="astat"><span>Avg</span><strong                id="avg-mq136">--</strong></div>
+                        <div class="astat"><span>Max</span><strong                id="max-mq136">--</strong></div>
+                    </div>
+                </div>
+                <div class="chart-wrap" style="height:240px"><canvas id="chartMQ136"></canvas></div>
+            </div>
+
+            <!-- MQ-137 -->
+            <div class="glass-card analytics-card">
+                <div class="analytics-header">
+                    <div class="analytics-sensor">
+                        <div class="stat-icon-wrap small green-bg"><i data-lucide="droplets"></i></div>
+                        <div>
+                            <h4>MQ-137 — Ammonia (NH₃)</h4>
+                            <span class="unit-note">GPIO 32 · ADC1_CH4 · Alert at 400 ADC</span>
+                        </div>
+                    </div>
+                    <div class="analytics-stats">
+                        <div class="astat"><span>Min</span><strong class="green" id="min-mq137">--</strong></div>
+                        <div class="astat"><span>Avg</span><strong               id="avg-mq137">--</strong></div>
+                        <div class="astat"><span>Max</span><strong               id="max-mq137">--</strong></div>
+                    </div>
+                </div>
+                <div class="chart-wrap" style="height:240px"><canvas id="chartMQ137"></canvas></div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ═══════════════════════════ HISTORY ═══════════════════════════ -->
+    <main id="page-history" class="page app-page">
+        <div class="app-header">
+            <div class="breadcrumb">
+                <button class="btn-icon" onclick="showPage('landing')"><i data-lucide="home"></i></button>
+                <i data-lucide="chevron-right" class="bc-sep"></i>
+                <button class="bc-link" onclick="showPage('dashboard')">Dashboard</button>
+                <i data-lucide="chevron-right" class="bc-sep"></i>
+                <span>Sensor History</span>
+            </div>
+            <div class="app-header-right">
+                <button class="btn-secondary" onclick="downloadCSV()">
+                    <i data-lucide="download"></i> Export CSV
+                </button>
+                <button class="btn-danger" onclick="promptClear()">
+                    <i data-lucide="trash-2"></i> Clear Logs
+                </button>
+            </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="history-summary">
+            <div class="summary-card glass-card">
+                <i data-lucide="database" class="cyan"></i>
+                <div><span class="sum-val" id="total-records">0</span><span class="sum-lbl">Total Records</span></div>
+            </div>
+            <div class="summary-card glass-card">
+                <i data-lucide="alert-triangle" class="amber"></i>
+                <div><span class="sum-val" id="total-alerts">0</span><span class="sum-lbl">Alert Events</span></div>
+            </div>
+            <div class="summary-card glass-card">
+                <i data-lucide="check-circle" class="green"></i>
+                <div><span class="sum-val" id="normal-count">0</span><span class="sum-lbl">Normal Readings</span></div>
+            </div>
+            <div class="summary-card glass-card">
+                <i data-lucide="clock" class="purple"></i>
+                <div><span class="sum-val" id="first-date">--</span><span class="sum-lbl">First Record</span></div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="table-controls glass-card">
+            <div class="search-box">
+                <i data-lucide="search"></i>
+                <input type="text" id="search-input" placeholder="Search by date, time, sensor value, status…" oninput="filterHistory()">
+            </div>
+            <div class="filter-pills">
+                <button class="filter-pill active" onclick="setFilter('all', this)">All</button>
+                <button class="filter-pill" onclick="setFilter('alert', this)">Alerts Only</button>
+                <button class="filter-pill" onclick="setFilter('normal', this)">Normal Only</button>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="glass-card table-wrap">
+            <table id="main-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th><i data-lucide="calendar"></i> Date</th>
+                        <th><i data-lucide="clock"></i> Time</th>
+                        <th><i data-lucide="leaf"></i> MQ-135</th>
+                        <th><i data-lucide="flame"></i> MQ-136</th>
+                        <th><i data-lucide="droplets"></i> MQ-137</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="history-body"></tbody>
+            </table>
+            <div id="table-empty" class="empty-msg" style="display:none; padding:60px 20px">
+                <i data-lucide="inbox" style="width:36px;height:36px"></i>
+                <strong>No records found</strong>
+                <span>Data will appear here once the ESP32 starts sending readings</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- ═══════════════════════════ SETTINGS ═══════════════════════════ -->
+    <main id="page-settings" class="page app-page">
+        <div class="app-header">
+            <div class="breadcrumb">
+                <button class="btn-icon" onclick="showPage('landing')"><i data-lucide="home"></i></button>
+                <i data-lucide="chevron-right" class="bc-sep"></i>
+                <button class="bc-link" onclick="showPage('dashboard')">Dashboard</button>
+                <i data-lucide="chevron-right" class="bc-sep"></i>
+                <span>Settings</span>
+            </div>
+        </div>
+
+        <div class="settings-grid">
+
+            <!-- ★ ESP32 CONNECTION — most important, top left -->
+            <div class="glass-card settings-card" style="border-color:rgba(6,182,212,0.22)">
+                <div class="settings-header">
+                    <div class="settings-icon cyan-bg"><i data-lucide="wifi"></i></div>
+                    <div>
+                        <h3>ESP32 Connection</h3>
+                        <p>Enter the IP address shown in your Arduino Serial Monitor when the ESP32 boots.</p>
+                    </div>
+                </div>
+
+                <!-- Connection status indicator -->
+                <div class="conn-status-row">
+                    <div class="conn-dot" id="sett-conn-indicator"></div>
+                    <span id="sett-conn-status">Not configured — enter IP below</span>
+                </div>
+
+                <div class="settings-field" style="margin-top:20px">
+                    <label><i data-lucide="wifi" style="width:14px;height:14px;vertical-align:middle"></i> ESP32 IP Address</label>
+                    <div class="ip-input-row">
+                        <input type="text" id="sett-esp32-ip" placeholder="e.g. 192.168.1.42" autocomplete="off">
+                        <button class="btn-primary" id="btn-connect-esp32" onclick="connectESP32()">
+                            <i data-lucide="plug-2"></i> Connect
+                        </button>
+                    </div>
+                </div>
+
+                <div class="ip-instructions glass-card" style="margin-top:16px">
+                    <h5><i data-lucide="terminal"></i> How to find your ESP32 IP</h5>
+                    <ol>
+                        <li>Connect ESP32 to your laptop via USB cable.</li>
+                        <li>Open Arduino IDE → <strong>Tools → Serial Monitor</strong>.</li>
+                        <li>Set baud rate to <strong>115200</strong>, press the Reset button on ESP32.</li>
+                        <li>Look for: <code>IP address: 10.x.x.x</code></li>
+                        <li>Your laptop must also be on WiFi: <strong>"realme7"</strong></li>
+                    </ol>
+                </div>
+
+                <div class="ip-instructions glass-card" style="margin-top:10px;border-color:rgba(239,68,68,0.25);background:rgba(239,68,68,0.04)">
+                    <h5 style="color:var(--amber)"><i data-lucide="alert-triangle"></i> If Connect still fails (CORS / PNA error)</h5>
+                    <ol>
+                        <li>Open a <strong>new Chrome tab</strong> and go to: <code id="esp32-direct-link">http://10.117.169.31/status</code></li>
+                        <li>You should see raw JSON — if yes, <strong>leave that tab open</strong>, then come back here and click Connect.</li>
+                        <li>Still failing? You need to update the ESP32 firmware — see <strong>Fix B</strong> below. ↓</li>
+                    </ol>
+                </div>
+
+                <div style="margin-top:16px">
+                    <button class="btn-danger" onclick="disconnectESP32()" style="font-size:0.8rem">
+                        <i data-lucide="wifi-off"></i> Disconnect
+                    </button>
+                </div>
+            </div>
+
+            <!-- System Info -->
+            <div class="glass-card settings-card">
+                <div class="settings-header">
+                    <div class="settings-icon green-bg"><i data-lucide="cpu"></i></div>
+                    <div><h3>System Information</h3><p>Hardware configuration and firmware details.</p></div>
+                </div>
+                <div class="sysinfo-grid">
+                    <div class="si-row"><span>Microcontroller</span><strong>ESP32-WROOM-32</strong></div>
+                    <div class="si-row"><span>Sensor 1</span><strong>MQ-135 (GPIO 34)</strong></div>
+                    <div class="si-row"><span>Sensor 2</span><strong>MQ-136 (GPIO 35)</strong></div>
+                    <div class="si-row"><span>Sensor 3</span><strong>MQ-137 (GPIO 32)</strong></div>
+                    <div class="si-row"><span>Fan Actuator</span><strong>Servo — GPIO 25</strong></div>
+                    <div class="si-row"><span>Alert Threshold MQ-135</span><strong>2300 ADC units</strong></div>
+                    <div class="si-row"><span>Alert Threshold MQ-136</span><strong>1750 ADC units</strong></div>
+                    <div class="si-row"><span>Alert Threshold MQ-137</span><strong>1750 ADC units</strong></div>
+                    <div class="si-row"><span>Fan Cycle</span><strong>10 seconds</strong></div>
+                    <div class="si-row"><span>Poll Rate</span><strong>Every 2 seconds</strong></div>
+                    <div class="si-row"><span>WiFi Network</span><strong>realme7</strong></div>
+                    <div class="si-row"><span>DB Records Stored</span><strong id="sett-rec-count">--</strong></div>
+                    <div class="si-row"><span>Firmware Version</span><strong>v2.1.0 — April 2026</strong></div>
+                    <div class="si-row"><span>Database</span><strong>LocalStorage JSON v4</strong></div>
+                </div>
+            </div>
+
+            <!-- Threshold Info (read-only, set in ESP32 firmware) -->
+            <div class="glass-card settings-card">
+                <div class="settings-header">
+                    <div class="settings-icon amber-bg"><i data-lucide="sliders-horizontal"></i></div>
+                    <div>
+                        <h3>Alert Thresholds</h3>
+                        <p>Thresholds are set in the ESP32 firmware. The values below are read-only for reference.</p>
+                    </div>
+                </div>
+                <div class="baseline-grid">
+                    <div class="baseline-row">
+                        <span><i data-lucide="leaf" class="cyan"></i> MQ-135 Air Quality</span>
+                        <strong><span id="sett-thr-mq135" class="cyan">2300 ADC</span></strong>
+                    </div>
+                    <div class="baseline-row">
+                        <span><i data-lucide="flame" class="purple"></i> MQ-136 Gas</span>
+                        <strong><span id="sett-thr-mq136" class="purple">1750 ADC</span></strong>
+                    </div>
+                    <div class="baseline-row">
+                        <span><i data-lucide="droplets" class="green"></i> MQ-137 Ammonia</span>
+                        <strong><span id="sett-thr-mq137" class="green">1750 ADC</span></strong>
+                    </div>
+                </div>
+                <div class="ip-instructions glass-card" style="margin-top:16px">
+                    <h5><i data-lucide="info"></i> To change thresholds</h5>
+                    <p style="font-size:0.82rem;color:var(--text-muted);margin-top:6px">
+                        Edit <code>THRESHOLD_MQ135</code>, <code>THRESHOLD_MQ136</code>, and <code>THRESHOLD_MQ137</code> constants in the Arduino sketch, then re-upload to the ESP32.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Data Management -->
+            <div class="glass-card settings-card">
+                <div class="settings-header">
+                    <div class="settings-icon purple-bg"><i data-lucide="database"></i></div>
+                    <div><h3>Data Management</h3><p>Manage stored sensor readings and logs.</p></div>
+                </div>
+                <div class="data-actions">
+                    <div class="data-action">
+                        <div>
+                            <h5><i data-lucide="download"></i> Export All Data</h5>
+                            <p>Download the complete sensor history as a formatted CSV with timestamps, ADC values, and statuses.</p>
+                        </div>
+                        <button class="btn-secondary" onclick="downloadCSV()"><i data-lucide="download"></i> Export CSV</button>
+                    </div>
+                    <div class="data-action danger">
+                        <div>
+                            <h5><i data-lucide="trash-2"></i> Clear All Records</h5>
+                            <p>Permanently delete all stored sensor readings and alerts. <strong>Cannot be undone.</strong></p>
+                        </div>
+                        <button class="btn-danger" onclick="promptClear()"><i data-lucide="trash-2"></i> Clear Database</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Toast -->
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modal" style="display:none" role="dialog" aria-modal="true">
+        <div class="modal-box glass-dark">
+            <div class="modal-icon-wrap"><i data-lucide="alert-triangle"></i></div>
+            <h4 id="modal-title">Confirm</h4>
+            <p  id="modal-msg">Are you sure?</p>
+            <div class="modal-btns">
+                <button class="btn-outline" onclick="closeModal()">Cancel</button>
+                <button class="btn-danger"  id="modal-ok">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="db.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
