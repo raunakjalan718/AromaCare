@@ -255,6 +255,12 @@ function setConnState(state) {
             break;
     }
 
+    // Toggle the explicit No-IP dashboard card warning
+    const noIpNotice = document.getElementById('no-ip-notice');
+    if (noIpNotice) {
+        noIpNotice.style.display = (state === 'connected' || state === 'connecting') ? 'none' : 'flex';
+    }
+
     // Update Settings connection indicator
     updateSettingsConnUI(state);
 }

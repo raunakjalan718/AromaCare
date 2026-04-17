@@ -32,15 +32,15 @@
     --red-dim:     rgba(239, 68, 68, 0.12);
 
     --nav-h:       70px;
-    --max-w:       1300px;
+    --max-w:       1280px;
     --r-sm:        8px;
-    --r-md:        16px;
-    --r-lg:        24px;
+    --r-md:        12px;
+    --r-lg:        20px;
     --r-xl:        32px;
 }
 
-/* ── RESET ─────────────────────────────────────────────────── */
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+/* ── BASE & NATIVE APP FEEL ─────────────────────────────────── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 
 body {
@@ -50,7 +50,20 @@ body {
     line-height: 1.6;
     overflow-x: hidden;
     min-height: 100vh;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+    cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
+
+/* Allow text selection in inputs and tables */
+input, textarea, .td-date, .td-time { user-select: auto; -webkit-user-select: auto; }
+
+/* Remove ugly tap outlines on mobile */
+button, a { outline: none; -webkit-tap-highlight-color: transparent; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
 
 /* ── BACKGROUND ORBS ───────────────────────────────────────── */
 .bg-orbs {
@@ -105,9 +118,12 @@ body {
     position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
     height: var(--nav-h);
     background: rgba(5, 5, 16, 0.82);
+    border-bottom: 1px solid var(--border);
+}
+.navbar::before {
+    content: ''; position: absolute; inset: 0; z-index: -1;
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
-    border-bottom: 1px solid var(--border);
 }
 .navbar-inner {
     max-width: var(--max-w); margin: 0 auto; height: 100%;
@@ -183,6 +199,8 @@ body {
 }
 .btn-logout:hover { background: rgba(239,68,68,0.18); }
 .btn-logout svg { width: 14px; height: 14px; }
+
+
 
 /* ── PAGE SYSTEM ───────────────────────────────────────────── */
 .page { display: none; min-height: 100vh; position: relative; z-index: 1; }
@@ -987,9 +1005,8 @@ td { padding: 13px 16px; font-size: 0.855rem; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
 
-/* ── RESPONSIVE ─────────────────────────────────────────────── */
+/* ── RESPONSIVE ── FULL NATIVE APP LAYOUT ───────────────────── */
 @media (max-width: 1100px) {
-    .nav-center { display: none; }
     .stats-grid-4 { grid-template-columns: 1fr 1fr; }
     .dash-bottom-grid { grid-template-columns: 1fr; }
     .analytics-grid { grid-template-columns: 1fr; }
@@ -1004,6 +1021,42 @@ td { padding: 13px 16px; font-size: 0.855rem; }
     .auth-left { display: none; }
     .history-summary { grid-template-columns: 1fr 1fr; }
     .no-ip-notice { flex-wrap: wrap; }
+    
+    /* Native Mobile App Bottom Navigation Bar */
+    .nav-center {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        background: rgba(5, 5, 16, 0.95);
+        border-top: 1px solid var(--border);
+        justify-content: space-around;
+        padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+        gap: 0;
+        z-index: 1000;
+        box-shadow: 0 -4px 30px rgba(0,0,0,0.6);
+    }
+    .nav-center::before {
+        content: ''; position: absolute; inset: 0; z-index: -1;
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+    }
+    .nav-link {
+        flex-direction: column;
+        font-size: 0.7rem;
+        padding: 6px;
+        color: var(--text-dim);
+        border-radius: 12px;
+        background: transparent !important;
+        gap: 4px;
+    }
+    .nav-link:hover { color: var(--cyan); }
+    .nav-link svg {
+        width: 22px !important; height: 22px !important; margin: 0;
+    }
+    .nav-link.active {
+        color: var(--cyan); background: transparent !important;
+    }
+    .app-page { padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px)) !important; }
+    .hero-section, .section { padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px)) !important; }
 }
 
 @media (max-width: 768px) {
@@ -1028,6 +1081,7 @@ td { padding: 13px 16px; font-size: 0.855rem; }
 @media (max-width: 480px) {
     .navbar-inner { padding: 0 14px; }
     .stats-grid-4 { grid-template-columns: 1fr; }
+    .stats-grid-3 { grid-template-columns: 1fr; }
     .history-summary { grid-template-columns: 1fr; }
     .app-header { flex-direction: column; align-items: flex-start; }
     .login-card { padding: 32px 24px; }
