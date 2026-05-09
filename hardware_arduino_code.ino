@@ -4,8 +4,8 @@
 #include <ESP32Servo.h>
 
 // WiFi credentials
-const char* ssid     = "realme7";
-const char* password = "realme_7";
+const char* ssid     = "YOUR WIFI (4G OR BELOW ONLY)";
+const char* password = "YOUR_PASSWORD";
 
 // Pin definitions
 const int MQ135_PIN = 34;  // ADC1_CH6
