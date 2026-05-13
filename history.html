@@ -3,6 +3,7 @@ function loadHistory() {
     const tableBody = document.getElementById('table-body');
     tableBody.innerHTML = ''; // Clear old rows
 
+
     // Show most recent data first
     logs.reverse().forEach(entry => {
         const row = `
