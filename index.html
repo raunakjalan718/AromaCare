@@ -7,21 +7,15 @@
     <meta name="description" content="Real-time IoT hygiene monitoring — ESP32 + MQ135, MQ136, MQ137 gas sensor array with live web dashboard.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 </head>
 <body>
 
-    <!-- Background -->
-    <div class="bg-orbs" aria-hidden="true">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
-        <div class="orb orb-4"></div>
-    </div>
-    <div class="grid-overlay" aria-hidden="true"></div>
+    <!-- Subtle grain texture overlay (3% opacity) -->
+    <div class="bg-texture" aria-hidden="true"></div>
 
     <!-- ═══════════════════════════ NAVBAR ═══════════════════════════ -->
     <nav class="navbar" id="navbar">
@@ -156,8 +150,9 @@
             </div>
         </section>
 
-        <!-- HOW IT WORKS -->
-        <section class="section" id="how-it-works">
+        <!-- HOW IT WORKS — dark olive contrast band -->
+        <div class="section-dark-wrapper">
+        <section class="section-dark" id="how-it-works">
             <div class="section-eyebrow">Event-Driven Architecture</div>
             <h2 class="section-title">How It Works</h2>
             <p class="section-desc">Real sensor readings from the ESP32 flow through a four-stage pipeline from hardware capture to instant Web Dashboard alerts.</p>
@@ -189,6 +184,7 @@
                 </div>
             </div>
         </section>
+        </div>
 
         <!-- SENSOR ARRAY -->
         <section class="section" id="sensors">

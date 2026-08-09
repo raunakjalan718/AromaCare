@@ -271,10 +271,10 @@ function updateSettingsConnUI(state) {
     if (!indicator || !statusTxt) return;
 
     const map = {
-        disconnected: ['#f59e0b', 'Not configured — enter IP below'],
-        connecting:   ['#06b6d4', 'Connecting…'],
-        connected:    ['#10b981', `Connected to ${APP.esp32Ip}`],
-        error:        ['#ef4444', `Unreachable: ${APP.esp32Ip} — check IP & WiFi`],
+        disconnected: ['#B87028', 'Not configured — enter IP below'],
+        connecting:   ['#C46B2D', 'Connecting…'],
+        connected:    ['#4A7C59', `Connected to ${APP.esp32Ip}`],
+        error:        ['#C0392B', `Unreachable: ${APP.esp32Ip} — check IP & WiFi`],
     };
     const [color, txt] = map[state] || map.disconnected;
     indicator.style.background = color;
@@ -312,8 +312,8 @@ function updateCard(sensor, val, exceeded, thr = 400) {
     const card = document.getElementById('card-' + sensor);
     if (card) {
         if (exceeded) {
-            card.style.borderColor = 'rgba(239,68,68,0.42)';
-            card.style.boxShadow   = '0 0 32px rgba(239,68,68,0.14)';
+            card.style.borderColor = 'rgba(192,57,43,0.42)';
+            card.style.boxShadow   = '0 0 28px rgba(192,57,43,0.10)';
         } else {
             card.style.borderColor = '';
             card.style.boxShadow   = '';
@@ -342,8 +342,8 @@ function updateFanCard(fan, timeLeft) {
     const card = document.getElementById('card-fan');
     if (card) {
         if (isOn) {
-            card.style.borderColor = 'rgba(239,68,68,0.42)';
-            card.style.boxShadow   = '0 0 32px rgba(239,68,68,0.14)';
+            card.style.borderColor = 'rgba(192,57,43,0.42)';
+            card.style.boxShadow   = '0 0 28px rgba(192,57,43,0.10)';
         } else {
             card.style.borderColor = '';
             card.style.boxShadow   = '';
@@ -438,9 +438,9 @@ function buildLiveChart() {
         data: {
             labels: [],
             datasets: [
-                ds('MQ-135 (ADC)', '#06b6d4'),
-                ds('MQ-136 (ADC)', '#a855f7'),
-                ds('MQ-137 (ADC)', '#10b981'),
+                ds('MQ-135 (ADC)', '#C46B2D'),   // terracotta
+                ds('MQ-136 (ADC)', '#5C7D9A'),   // dusty steel-blue
+                ds('MQ-137 (ADC)', '#4A7C59'),   // forest olive-green
             ]
         },
         options: liveChartOptions()
@@ -487,23 +487,23 @@ function liveChartOptions() {
         responsive: true, maintainAspectRatio: false,
         plugins: {
             legend: { display: true, position: 'top', align: 'end',
-                labels: { font: { family:'Inter', size:11 }, color:'#64748b', boxWidth:14, padding:12 } },
+                labels: { font: { family:'DM Sans', size:11 }, color:'#706F63', boxWidth:14, padding:12 } },
             tooltip: {
-                backgroundColor: 'rgba(5,5,20,0.93)',
-                borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1, padding: 12,
-                titleColor: '#94a3b8', bodyColor: '#e2e8f0',
-                bodyFont:  { family:'Inter', size:12, weight:'600' },
-                titleFont: { family:'Inter', size:11 },
+                backgroundColor: '#FFFDF8',
+                borderColor: 'rgba(31,35,23,0.14)', borderWidth: 1, padding: 12,
+                titleColor: '#706F63', bodyColor: '#1F2317',
+                bodyFont:  { family:'DM Sans', size:12, weight:'600' },
+                titleFont: { family:'DM Sans', size:11 },
                 callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y} ADC` }
             }
         },
         scales: {
-            x: { grid: { color:'rgba(255,255,255,0.04)', drawBorder:false },
-                 ticks:{ color:'#475569', font:{family:'Inter', size:10}, maxTicksLimit:8 } },
+            x: { grid: { color:'rgba(31,35,23,0.06)', drawBorder:false },
+                 ticks:{ color:'#9B9A8E', font:{family:'DM Sans', size:10}, maxTicksLimit:8 } },
             y: { min: 0, max: 4095,
-                 grid: { color:'rgba(255,255,255,0.04)', drawBorder:false },
-                 ticks:{ color:'#475569', font:{family:'Inter', size:10} },
-                 title:{ display:true, text:'ADC Value (0–4095)', color:'#475569', font:{family:'Inter', size:10} } }
+                 grid: { color:'rgba(31,35,23,0.06)', drawBorder:false },
+                 ticks:{ color:'#9B9A8E', font:{family:'DM Sans', size:10} },
+                 title:{ display:true, text:'ADC Value (0–4095)', color:'#9B9A8E', font:{family:'DM Sans', size:10} } }
         },
         interaction: { mode:'index', intersect:false },
         animation: { duration: 350 }
@@ -542,9 +542,9 @@ function renderAnalytics() {
     const stats    = DB.getStats(raw); // stats always on full dataset
 
     const sensors = [
-        { key:'mq135', id:'chartMQ135', color:'#06b6d4', label:'MQ-135 Air Quality (ADC)' },
-        { key:'mq136', id:'chartMQ136', color:'#a855f7', label:'MQ-136 Gas Detection (ADC)' },
-        { key:'mq137', id:'chartMQ137', color:'#10b981', label:'MQ-137 Ammonia (ADC)' },
+        { key:'mq135', id:'chartMQ135', color:'#C46B2D', label:'MQ-135 Air Quality (ADC)' },
+        { key:'mq136', id:'chartMQ136', color:'#5C7D9A', label:'MQ-136 Gas Detection (ADC)' },
+        { key:'mq137', id:'chartMQ137', color:'#4A7C59', label:'MQ-137 Ammonia (ADC)' },
     ];
 
     sensors.forEach(s => {
@@ -599,21 +599,21 @@ function analyticsChartOptions() {
         responsive: true, maintainAspectRatio: false,
         plugins: {
             legend: { display: true, position: 'top', align: 'end',
-                labels: { font:{family:'Inter', size:10}, color:'#64748b', boxWidth:12, padding:10 } },
+                labels: { font:{family:'DM Sans', size:10}, color:'#706F63', boxWidth:12, padding:10 } },
             tooltip: {
-                backgroundColor: 'rgba(5,5,20,0.93)',
-                borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1, padding: 12,
-                titleColor: '#94a3b8', bodyColor: '#e2e8f0',
-                bodyFont:  { family:'Inter', size:12, weight:'600' },
-                titleFont: { family:'Inter', size:11 },
+                backgroundColor: '#FFFDF8',
+                borderColor: 'rgba(31,35,23,0.14)', borderWidth: 1, padding: 12,
+                titleColor: '#706F63', bodyColor: '#1F2317',
+                bodyFont:  { family:'DM Sans', size:12, weight:'600' },
+                titleFont: { family:'DM Sans', size:11 },
             }
         },
         scales: {
-            x: { grid:{color:'rgba(255,255,255,0.04)', drawBorder:false},
-                 ticks:{color:'#475569', font:{family:'Inter',size:9}, maxTicksLimit:8, maxRotation:30} },
+            x: { grid:{color:'rgba(31,35,23,0.06)', drawBorder:false},
+                 ticks:{color:'#9B9A8E', font:{family:'DM Sans',size:9}, maxTicksLimit:8, maxRotation:30} },
             y: { min:0, max:4095,
-                 grid:{color:'rgba(255,255,255,0.04)', drawBorder:false},
-                 ticks:{color:'#475569', font:{family:'Inter',size:10}} }
+                 grid:{color:'rgba(31,35,23,0.06)', drawBorder:false},
+                 ticks:{color:'#9B9A8E', font:{family:'DM Sans',size:10}} }
         },
         interaction: { mode:'index', intersect:false },
         animation: { duration:400 }
